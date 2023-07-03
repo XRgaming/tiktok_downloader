@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TikTok Downloader</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <h1>TikTok Downloader</h1>
+    <input type="text" id="tiktokUrl" placeholder="Enter tiktok url mom!!">
+    <button onclick="downloadVideo()">Download</button>
+
+    <script>
+        function downloadVideo() {
+            var tiktokUrl = document.getElementById("tiktokUrl").value;
+            if (tiktokUrl === "") {
+                alert("You gotta enter a url first!");
+                return;
+            }
+
+            var videoId = tiktokUrl.match(/\/(\d+)\.html/)[1];
+            var videoUrl = "https://www.tiktok.com/@tiktok/video/" + videoId;
+            var apiUrl = "https://www.tiktokapi.dev/v1/downloader?url=" + encodeURIComponent(videoUrl);
+
+            $.ajax({
+                url: apiUrl,
+                method: "GET",
+                dataType: "json",
+                success: function(response) {
+                    if (response.status === "success") {
+                        var downloadUrl = response.downloadUrl;
+                        var a = document.createElement("a");
+                        a.href = downloadUrl;
+                        a.download = "tiktok_video.mp4";
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                    } else {
+                        alert("Failed to fetch download link. Please check the TikTok URL and try again.");
+                    }
+                },
+                error: function() {
+                    alert("Failed to fetch download link. Please check your internet connection and try again.");
+                }
+            });
+        }
+    </script>
+</body>
+</html>
